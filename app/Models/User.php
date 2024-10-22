@@ -49,6 +49,6 @@ class User extends Authenticatable
 
     public function phoneEntries(): BelongsToMany
     {
-        return $this->belongsToMany(PhoneEntry::class);
+        return $this->belongsToMany(PhoneEntry::class, 'user_phone_entry');
     }
 }

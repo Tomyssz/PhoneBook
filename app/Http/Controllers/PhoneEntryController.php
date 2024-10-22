@@ -4,21 +4,27 @@ namespace App\Http\Controllers;
 
 use App\Models\PhoneEntry;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class PhoneEntryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): View
     {
-        return view('phonebook.index');
+        $user    = auth()->user();
+        $entries = $user->phoneEntries()->get();
+
+        return view('phonebook.index')->with([
+            'entries' => $entries
+        ]);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): View
     {
         return view('phonebook.create');
     }
