@@ -14,14 +14,43 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if(!empty($entries))
-                @foreach($entries as $entry)
-                    <div>
-                        {{ $entry->name }}
-                        {{ $entry->phone }}
-                    </div>
-                @endforeach
-           @endif
+            @if(count($phoneEntries))
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th colspan="2">Actions</th>
+                        </tr>
+                    </thead>
+                    @foreach($phoneEntries as $phoneEntry)
+                        <tr>
+                            <td>
+                                {{ $phoneEntry->name }}
+                            </td>
+                            <td>
+                                {{ $phoneEntry->phone }}
+                            </td>
+                            <td>
+                                <form method="post" action="{{ route('phonebook.destroy', $phoneEntry->id) }}">
+                                    @csrf
+                                    @method('DELETE')
+                                    <x-danger-button>{{ __('Delete') }}</x-danger-button>
+                                </form>
+                            </td>
+                            <td>
+                                <a href="">
+                                    <x-primary-button>{{ __('Edit') }}</x-primary-button>
+                                </a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </table>
+            @else
+                <div>
+                    {{ __('Your phonebook is empty') }}
+                </div>
+            @endif
         </div>
     </div>
 </x-app-layout>

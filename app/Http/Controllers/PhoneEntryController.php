@@ -14,10 +14,10 @@ class PhoneEntryController extends Controller
     public function index(): View
     {
         $user    = auth()->user();
-        $entries = $user->phoneEntries()->get();
+        $phoneEntries = $user->phoneEntries()->get();
 
         return view('phonebook.index')->with([
-            'entries' => $entries
+            'phoneEntries' => $phoneEntries
         ]);
     }
 
@@ -34,7 +34,19 @@ class PhoneEntryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'regex:/(\+[0-9]{11})/'],
+        ]);
+
+        $phone_entry = PhoneEntry::create([
+            'name' => $request->name,
+            'phone' => $request->phone,
+        ]);
+
+        \auth()->user()->phoneEntries()->attach($phone_entry);
+
+        return redirect(route('phonebook.index'));
     }
 
     /**
@@ -64,8 +76,14 @@ class PhoneEntryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(PhoneEntry $phoneEntry)
+    public function destroy($id)
     {
-        //
+        $phoneEntry = PhoneEntry::find($id);
+
+        if ($phoneEntry->exists()) {
+            $phoneEntry->delete();
+        }
+
+        return redirect(route('phonebook.index'));
     }
 }

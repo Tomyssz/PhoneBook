@@ -10,8 +10,14 @@ class PhoneEntry extends Model
 {
     use SoftDeletes;
 
+    protected $fillable = [
+        'name',
+        'phone',
+        'deleted_at'
+    ];
+
     public function user(): BelongsToMany
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class, 'user_phone_entry')->withTimestamps();
     }
 }
