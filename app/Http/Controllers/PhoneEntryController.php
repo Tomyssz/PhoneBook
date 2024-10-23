@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\PhoneEntry;
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -13,7 +15,7 @@ class PhoneEntryController extends Controller
      */
     public function index(): View
     {
-        $user    = auth()->user();
+        $user         = auth()->user();
         $phoneEntries = $user->phoneEntries()->get();
 
         return view('phonebook.index')->with([
@@ -44,39 +46,42 @@ class PhoneEntryController extends Controller
             'phone' => $request->phone,
         ]);
 
-        \auth()->user()->phoneEntries()->attach($phone_entry);
+        \auth()->user()->phoneEntries()->attach($phone_entry, ['main' => 1]);
 
         return redirect(route('phonebook.index'));
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(PhoneEntry $phoneEntry)
-    {
-        //
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
-    public function edit(PhoneEntry $phoneEntry)
+    public function edit(int $id): View
     {
-        //
+        $users      = User::where('id', '<>', auth()->id())->get();
+        $phoneEntry = PhoneEntry::find($id);
+
+        return view('phonebook.edit')->with([
+            'phoneEntry' => $phoneEntry,
+            'users'      => $users
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, PhoneEntry $phoneEntry)
+    public function update(Request $request, int $id): RedirectResponse
     {
-        //
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'regex:/(\+[0-9]{11})/']
+        ]);
+
+
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(int $id): RedirectResponse
     {
         $phoneEntry = PhoneEntry::find($id);
 

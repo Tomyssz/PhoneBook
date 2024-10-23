@@ -39,7 +39,7 @@
                                 </form>
                             </td>
                             <td>
-                                <a href="">
+                                <a href="{{ route('phonebook.edit', $phoneEntry->id) }}">
                                     <x-primary-button>{{ __('Edit') }}</x-primary-button>
                                 </a>
                             </td>
