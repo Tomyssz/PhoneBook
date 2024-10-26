@@ -27,7 +27,7 @@ class PasswordConfirmationTest extends TestCase
             'password' => 'password',
         ]);
 
-        $response->assertRedirect();
+        $response->assertRedirect(route('phonebook.index', absolute: false));
         $response->assertSessionHasNoErrors();
     }
 
