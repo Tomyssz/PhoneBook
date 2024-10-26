@@ -20,7 +20,7 @@ class PhoneEntryFactory extends Factory
     {
         return [
             'name' => fake()->name(),
-            'phone' => fake()->phoneNumber()
+            'phone' => fake()->e164PhoneNumber()
         ];
     }
 }
