@@ -32,9 +32,10 @@
 
                 @if(count($users) > 0)
                     <div>
-                        <select name="users[]" id="users" multiple="multiple">
+                        <x-input-label for="users" :value="__('Select users to give access to')" />
+                        <select name="users[]" id="users" multiple="multiple" class="tom-select multiple">
                             @foreach($users as $user)
-                                <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                <option value="{{ $user->id }}" @if($phoneEntry->haveAccess($user->id)) selected @endif>{{ $user->name }}</option>
                             @endforeach
                         </select>
                     </div>

@@ -31,9 +31,9 @@ class PhoneEntry extends Model
         return $this->user()->where('user_id', auth()->id())->firstOrFail()->pivot->main;
     }
 
-    public function haveAccess(): bool
+    public function haveAccess(int $id = null): bool
     {
-        return (bool)$this->user()->where('user_id', auth()->id())->first();
+        return (bool)$this->user()->where('user_id', $id ?: auth()->id())->first();
     }
 
     public static function validateAccessRights(PhoneEntry|null $entry, array &$errors): void
