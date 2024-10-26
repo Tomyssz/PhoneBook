@@ -16,6 +16,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <form method="post" action="{{ route('phonebook.update', $phoneEntry->id) }}" class="mt-6 space-y-6">
                 @csrf
+                @method('PUT')
 
                 <div>
                     <x-input-label for="name" :value="__('Name')" />
@@ -31,7 +32,7 @@
 
                 @if(count($users) > 0)
                     <div>
-                        <select name="users" id="users" multiple>
+                        <select name="users[]" id="users" multiple="multiple">
                             @foreach($users as $user)
                                 <option value="{{ $user->id }}">{{ $user->name }}</option>
                             @endforeach

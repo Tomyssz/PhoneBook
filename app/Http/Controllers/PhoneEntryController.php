@@ -10,6 +10,8 @@ use Illuminate\View\View;
 
 class PhoneEntryController extends Controller
 {
+    private array $errors = [];
+
     /**
      * Display a listing of the resource.
      */
@@ -54,13 +56,21 @@ class PhoneEntryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(int $id): View
+    public function edit(int $id)
     {
-        $users      = User::where('id', '<>', auth()->id())->get();
-        $phoneEntry = PhoneEntry::find($id);
+        $users              = User::where('id', '<>', auth()->id())->get();
+        $phonebook_entry    = PhoneEntry::find($id);
+
+        PhoneEntry::validateAccessRights($phonebook_entry, $this->errors);
+
+        if (!empty($this->errors)) {
+            return redirect(route('phonebook.index'))->withErrors([
+                'errors' => $this->errors
+            ]);
+        }
 
         return view('phonebook.edit')->with([
-            'phoneEntry' => $phoneEntry,
+            'phoneEntry' => $phonebook_entry,
             'users'      => $users
         ]);
     }
@@ -70,12 +80,29 @@ class PhoneEntryController extends Controller
      */
     public function update(Request $request, int $id): RedirectResponse
     {
+        $phonebook_entry = PhoneEntry::find($id);
+
+        PhoneEntry::validateAccessRights($phonebook_entry, $this->errors);
+
+        if (!empty($this->errors)) {
+            return redirect(route('phonebook.index'))->withErrors([
+                'errors' => $this->errors
+            ]);
+        }
+
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'phone' => ['required', 'regex:/(\+[0-9]{11})/']
+            'phone' => ['required', 'regex:/(\+[0-9]{11})/'],
+            'users' => ['exists:users,id']
         ]);
 
+        if (!empty($request->users)) {
+            foreach ($request->users as $user_id) {
+                $phonebook_entry->user()->attach($user_id);
+            }
+        }
 
+        return redirect(route('phonebook.index'));
     }
 
     /**
@@ -83,10 +110,18 @@ class PhoneEntryController extends Controller
      */
     public function destroy(int $id): RedirectResponse
     {
-        $phoneEntry = PhoneEntry::find($id);
+        $phonebook_entry = PhoneEntry::find($id);
 
-        if ($phoneEntry->exists()) {
-            $phoneEntry->delete();
+        PhoneEntry::validateAccessRights($phonebook_entry, $this->errors);
+
+        if (!empty($this->errors)) {
+            return redirect(route('phonebook.index'))->withErrors([
+                'errors' => $this->errors
+            ]);
+        }
+
+        if ($phonebook_entry->exists()) {
+            $phonebook_entry->delete();
         }
 
         return redirect(route('phonebook.index'));

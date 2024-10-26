@@ -18,31 +18,37 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Phone</th>
-                            <th colspan="2">Actions</th>
+                            <th>{{ __('#') }}</th>
+                            <th>{{ __('Name') }}</th>
+                            <th>{{ __('Phone') }}</th>
+                            <th colspan="2">{{ __('Actions') }}</th>
                         </tr>
                     </thead>
                     @foreach($phoneEntries as $phoneEntry)
                         <tr>
+                            <td>
+                                {{ $phoneEntry->id }}
+                            </td>
                             <td>
                                 {{ $phoneEntry->name }}
                             </td>
                             <td>
                                 {{ $phoneEntry->phone }}
                             </td>
-                            <td>
-                                <form method="post" action="{{ route('phonebook.destroy', $phoneEntry->id) }}">
-                                    @csrf
-                                    @method('DELETE')
-                                    <x-danger-button>{{ __('Delete') }}</x-danger-button>
-                                </form>
-                            </td>
-                            <td>
-                                <a href="{{ route('phonebook.edit', $phoneEntry->id) }}">
-                                    <x-primary-button>{{ __('Edit') }}</x-primary-button>
-                                </a>
-                            </td>
+                            @if($phoneEntry->canUpdate())
+                                <td>
+                                    <form method="post" action="{{ route('phonebook.destroy', $phoneEntry->id) }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <x-danger-button>{{ __('Delete') }}</x-danger-button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <a href="{{ route('phonebook.edit', $phoneEntry->id) }}">
+                                        <x-primary-button>{{ __('Edit') }}</x-primary-button>
+                                    </a>
+                                </td>
+                            @endif
                         </tr>
                     @endforeach
                 </table>
