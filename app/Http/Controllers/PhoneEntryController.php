@@ -96,11 +96,16 @@ class PhoneEntryController extends Controller
             'users' => ['exists:users,id']
         ]);
 
+        $phonebook_entry->name = $request->name;
+        $phonebook_entry->phone = $request->phone;
+
         if (!empty($request->users)) {
             foreach ($request->users as $user_id) {
                 $phonebook_entry->user()->attach($user_id);
             }
         }
+
+        $phonebook_entry->save();
 
         return redirect(route('phonebook.index'));
     }
