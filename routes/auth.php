@@ -9,9 +9,12 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\PhoneEntryController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
+    Route::get('/', [RegisteredUserController::class, 'create']);
+
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
 
@@ -36,6 +39,8 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('/', [PhoneEntryController::class, 'index']);
+
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');
 
